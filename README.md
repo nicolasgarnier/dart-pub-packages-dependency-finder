@@ -2,7 +2,7 @@
 
 This is a command line tool that will help you find all packages in Pub that have a given dependency.
 
-#Usage
+##Usage
 
 This script is written in Dart so you'll need Dart installed. You run it using the following command:
 
