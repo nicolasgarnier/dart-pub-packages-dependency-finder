@@ -4,7 +4,7 @@ This is a command line tool that will help you find all packages in Pub that hav
 
 ##Usage
 
-This script is written in Dart so you'll need Dart installed. You run it using the following command:
+This script is written in [Dart](https://www.dartlang.org) so you'll need Dart installed. You run it using the following command:
 
     dart dependency_finder.dart <package_name> [--skip-downloads]
     
