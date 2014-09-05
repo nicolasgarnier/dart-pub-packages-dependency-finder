@@ -1,0 +1,5 @@
+name: package_dependency_finder
+description: Finds all Dart Pub packages that uses a given dependecy
+dependencies:
+  http: '>=0.9.0 <0.10.0'
+  yaml: '>=2.0.1+1 <3.0.0'
