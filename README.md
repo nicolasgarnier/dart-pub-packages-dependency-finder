@@ -34,22 +34,23 @@ In this particular example the output would be:
     Finding last versions of each packages... 1181/1181 - Done.
     Downloading packages... 1181/1181 - Done.
     Analyzing packages... 1181/1181
-    All Done! Found 75 packages with packages:js dependency:
+    All Done! Found 26 packages with packages:js dependency:
      - add_v1_api-0.1.0
      - aloha-2.0.0
      - dancer-0.4.0+4
      - dartwork-0.1.0
      - diffbot-0.1.1
      - form_elements-1.1.0
-     - google_adexchangeseller_v1_api-0.4.9
      - google_adsense_v1_1_api-0.3.8
-     - google_adsense_v1_2_api-0.4.9
      - google_adsense_v1_api-0.3.8
-     - google_adsensehost_v4_1_api-0.4.9
-     - google_analytics_v2_4_api-0.4.9
-     - google_analytics_v3_api-0.4.9
-     - google_androidpublisher_v1_api-0.4.9
-     - google_audit_v1_api-0.4.9
+     - google_compute_v1beta12_api-0.1.0
+     - google_compute_v1beta13_api-0.1.6
+     - google_compute_v1beta14_api-0.3.8
+     - google_dynamiccreatives_v1_api-0.1.1
+     - google_latitude_v1_api-0.3.8
+     - google_plus_v1moments_api-0.1.0
+     - google_plus_widget-0.0.1
+     - haml-0.0.1
      ...
 
 Now lets say you also want to know which packages have a dependency on the `yaml` package you can run the following command:
