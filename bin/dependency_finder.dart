@@ -123,15 +123,13 @@ void _getNextPackageVersions() {
 
     // Extract last version from JSON body.
     var json = JSON.decode(response.body);
-    String lastVersion = json["versions"][json["versions"].length - 1];
-
-    // We have the last version number but we need to clean it up to remove heading 0s as the download link won't have heading 0s.
-    List<String> cleanedLastVersion = new List<String>();
-    lastVersion.split(".").forEach((String subVersion){
-        try{subVersion = "${int.parse(subVersion)}";}catch(_){}
-        cleanedLastVersion.add("$subVersion");
-      });
-    lastVersion = cleanedLastVersion.join(".");
+    List<String> versions = json["versions"];
+    String lastVersion = versions.reduce((String s1, String s2) {
+        Version v1 = Semver.parseString(s1);
+        Version v2 = Semver.parseString(s2);
+        return Semver.returnGreater(v1, v2).toString();
+    });
+    lastVersion = Semver.parseString(lastVersion).toString(); // In case there was only 1 version we still make it go through the Semver parser to clean it up.
 
     // Save last version in Map and move to next package.
     String name = json["name"];
@@ -145,6 +143,122 @@ void _getNextPackageVersions() {
     _getNextPackageVersions();
     return true;
   });
+}
+
+/**
+ * Describes a Dart Pub version and provides some helper classes.
+ **/
+class Semver {
+  // All the attributes can either be int or String.
+  var top = 0;
+  var mid = 0;
+  var last = 0;
+  var minus = "";
+  var plus = "";
+
+  // Parses a String as a Semver. e.g. 1.3.1-dev+3
+  static Semver parseString(String s) {
+    Semver v = new Semver();
+
+    String prefix;
+
+    // First extract potential + and - parts.
+    List<String> bumpSplit = s.split("-");
+    if (bumpSplit.length == 1){
+      bumpSplit = s.split("+");
+      prefix = bumpSplit[0];
+      if (bumpSplit.length == 2) {
+        try {
+          v.plus = int.parse(bumpSplit[1]);
+        } catch(_) {
+          v.plus = bumpSplit[1];
+        }
+      }
+    } else {
+      prefix = bumpSplit[0];
+      List<String> plusSplit = bumpSplit[1].split("+");
+      v.minus = plusSplit[0];
+      if (plusSplit.length>1) {
+        try{
+          v.plus = int.parse(plusSplit[1]);
+        } catch(_) {
+          v.plus = plusSplit[1];
+        }
+      }
+    }
+
+    // Parsing the main version section z.y.z
+    List<String> versionSplit = new List<String>();
+    versionSplit = prefix.split(".");
+    try {
+      v.top = int.parse(versionSplit[0]);
+    } catch(_) {
+      v.top = versionSplit[0];
+    }
+    try {
+      v.mid = int.parse(versionSplit[1]);
+    } catch(_) {
+      v.mid = versionSplit[1];
+    }
+    try {
+      v.last = int.parse(versionSplit[2]);
+    } catch(_) {
+      v.last = versionSplit[2];
+    }
+
+    return v;
+  }
+
+  // Returns a String representation of the Semver
+  String toString() {
+    String plusStr = "";
+    String minusStr = "";
+
+    if (plus != "") {
+      plusStr = "+${plus}";
+    }
+
+    if (minus != "") {
+      minusStr = "-${minus}";
+    }
+
+    return "$top.$mid.$last$minusStr$plusStr";
+  }
+
+  // Returns the greater semver of the two.
+  static Semver returnGreater(Semver v1, Semver v2){
+    if (v2.top > v1.top) return v2;
+    if (v2.top < v1.top) return v1;
+
+    if (v2.mid > v1.mid) return v2;
+    if (v2.mid < v1.mid) return v1;
+
+    if(v2.last is String || v1.last is String) {
+      if ("${v2.last}".compareTo("${v1.last}") > 0) return v2;
+      if ("${v2.last}".compareTo("${v1.last}") < 0) return v1;
+    } else {
+      if (v2.last > v1.last) return v2;
+      if (v2.last < v1.last) return v1;
+    }
+
+    if(v2.minus is String || v1.minus is String) {
+      if ("${v2.minus}".compareTo("${v1.minus}") > 0) return v2;
+      if ("${v2.minus}".compareTo("${v1.minus}") < 0) return v1;
+    } else {
+      if (v2.minus > v1.minus) return v2;
+      if (v2.minus < v1.minus) return v1;
+    }
+
+    if(v2.plus is String || v1.plus is String) {
+      if ("${v2.plus}".compareTo("${v1.plus}") > 0) return v2;
+      if ("${v2.plus}".compareTo("${v1.plus}") < 0) return v1;
+    } else {
+      if (v2.plus > v1.plus) return v2;
+      if (v2.plus < v1.plus) return v1;
+    }
+
+    return v1;
+  }
 }
 
 // Step 3 - We download each packages archives.
