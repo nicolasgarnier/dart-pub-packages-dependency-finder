@@ -78,3 +78,13 @@ Here is what the output would look like:
      - polymer-0.9.5+2
      - polymer_one_script-0.0.1
      ...
+
+##Disclaimer
+
+Even though contributors for this project are working for Google this is not an official Google Product.
+This is an open-source sample script written in Dart.
+
+##License
+
+Apache 2.0
+Copyright 2014 Google Inc
